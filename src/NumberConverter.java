@@ -44,6 +44,13 @@ public class NumberConverter {
     }
 
     public int[] convertToBinary() {
+        if (base != 10) {
+            int[] base10inArray = convertToDecimal();
+            int base10 = 0;
+            for (int digit : base10inArray) {
+
+            }
+        }
         return null;
     }
 
