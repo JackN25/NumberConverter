@@ -30,7 +30,7 @@ public class NumberConverter {
     public int[] convertToDecimal() {
         int base10 = 0;
         for (int i = 0; i < digits.length; i++) {
-            base10 += digits[i] * Math.pow(base, digits.length - 1);
+            base10 += digits[i] * Math.pow(base, (digits.length - 1) - i);
         }
         String base10AsString = "" + base10;
 
