@@ -1,6 +1,9 @@
 public class NumberConverter {
     int[] digits;
-    int base;
+    int firstBase;
+    int base10;
+    int binary;
+    int octal;
 
     public NumberConverter(int number, int base) {
         String numberAsString = Integer.toString(number);
@@ -10,7 +13,23 @@ public class NumberConverter {
             int d = Integer.parseInt(single);
             digits[i] = d;
         }
-        this.base = base;
+        this.firstBase = base;
+        if (base == 10) {
+            base10 = number;
+            calculateBinary();
+            calculateOctal();
+        } else if (base == 2) {
+            binary = number;
+            calculateBase10();
+            calculateOctal();
+        } else if (base == 8) {
+            octal = number;
+            calculateBase10();
+            calculateBinary();
+        } else if (base == 16) {
+
+        }
+
     }
 
     public String displayOriginalNumber() {
@@ -27,11 +46,13 @@ public class NumberConverter {
 
     }
 
-    public int[] convertToDecimal() {
-        int base10 = 0;
+    private void calculateBase10() {
         for (int i = 0; i < digits.length; i++) {
-            base10 += digits[i] * Math.pow(base, (digits.length - 1) - i);
+            base10 += digits[i] * Math.pow(firstBase, (digits.length - 1) - i);
         }
+    }
+
+    public int[] convertToDecimal() {
         String base10AsString = "" + base10;
 
         int [] base10InArray = new int[base10AsString.length()];
@@ -43,19 +64,55 @@ public class NumberConverter {
         return base10InArray;
     }
 
-    public int[] convertToBinary() {
-        if (base != 10) {
-            int[] base10inArray = convertToDecimal();
-            int base10 = 0;
-            for (int digit : base10inArray) {
-
+    private void calculateBinary(){
+        String binaryString = "";
+        int base10ForCalculation = base10;
+        while (base10ForCalculation != 1) {
+            if (base10ForCalculation % 2 != 0) {
+                binaryString += "1";
+                base10ForCalculation -= 1;
+                base10ForCalculation /= 2;
+            } else {
+                binaryString += "0";
+                base10ForCalculation /= 2;
             }
         }
-        return null;
+        binary = Integer.parseInt(binaryString);
+    }
+
+    public int[] convertToBinary() {
+        String binaryAsString = Integer.toString(binary);
+        int[] binaryArray = new int[binaryAsString.length()];
+        for (int i = 0; i < binaryArray.length; i++) {
+            binaryArray[i] = Integer.parseInt(binaryAsString.charAt(i) + "");
+        }
+        return binaryArray;
+    }
+
+    private void calculateOctal() {
+        String octalString = "";
+        int base10ForCalculation = base10;
+        while (base10ForCalculation != 0) {
+            if (base10ForCalculation % 8 == 0) {
+                octalString += "0";
+                base10ForCalculation /= 8;
+            } else {
+                octalString += (base10ForCalculation % 8) + "";
+                base10ForCalculation -= (base10ForCalculation % 8);
+                base10ForCalculation /= 8;
+            }
+        }
+        octal = Integer.parseInt(octalString);
     }
 
     public int[] convertToOctal() {
-        return null;
+        String octalAsString = Integer.toString(octal);
+        int[] octalArray = new int[octalAsString.length()];
+        for (int i = 0; i < octalArray.length; i++) {
+            octalArray[i] = Integer.parseInt(octalAsString.charAt(i) + "");
+
+        }
+        return octalArray;
     }
 }
 
