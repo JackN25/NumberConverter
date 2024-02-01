@@ -5,7 +5,7 @@ import java.util.Set;
 
 class ConverterRunner {
 
-    static boolean isBinary(int number)
+    public static boolean isBinary(int number)
     {
         Set<Integer> set = new HashSet<>();
 
@@ -23,10 +23,16 @@ class ConverterRunner {
 
         // If the original number only contained 0's and 1's
         // then size of the set must be 0
-        if (set.size() == 0) {
-            return true;
-        }
-        return false;
+        return set.size() == 0;
+    }
+
+    public static boolean isValidOctal( String octalInput )
+    {
+        return octalInput.matches( "[0-7]*$" );
+    }
+
+    public static boolean isValidDecimal(String input) {
+        return input.matches();
     }
 
     public static void main(String[] args) {
@@ -57,7 +63,10 @@ class ConverterRunner {
             if (base == 2 && isBinary(n)) {
                 isNumberValid = true;
             }
-            if (base == 8 && )
+            if (base == 8 && isValidOctal(Integer.toString(n))) {
+                isNumberValid = true;
+            }
+            if (base == 10 && i)
         }
         s.close();
 
