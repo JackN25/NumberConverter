@@ -5,25 +5,9 @@ import java.util.Set;
 
 class ConverterRunner {
 
-    public static boolean isBinary(int number)
+    public static boolean isBinary(String input)
     {
-        Set<Integer> set = new HashSet<>();
-
-        // Put all the digits of the number in the set
-        while (number > 0) {
-            int digit = number % 10;
-            set.add(digit);
-            number /= 10;
-        }
-
-        // Since a HashSet does not allow duplicates so only
-        // a single copy of '0' and '1' will be stored
-        set.remove(0);
-        set.remove(1);
-
-        // If the original number only contained 0's and 1's
-        // then size of the set must be 0
-        return set.size() == 0;
+        return input.matches("[0-1]*$");
     }
 
     public static boolean isValidOctal( String octalInput )
@@ -32,7 +16,11 @@ class ConverterRunner {
     }
 
     public static boolean isValidDecimal(String input) {
-        return input.matches();
+        return input.matches("^[0-9]*$");
+    }
+
+    public static boolean isValidHex(String input) {
+        return input.matches("^[0-9A-Fa-f]*$");
     }
 
     public static void main(String[] args) {
@@ -49,31 +37,36 @@ class ConverterRunner {
             System.out.print("Enter the base of your number (2, 8 or 10): ");
             String choice = s.nextLine();
             base = Integer.parseInt(choice);
-            if (base == 2 || base == 8 || base == 10) {
+            if (base == 2 || base == 8 || base == 10 || base == 16) {
                 isBaseValid = true;
             } else {
                 System.out.println("Please enter a valid base!");
             }
         }
-
+        
+        String number = null;
         while (!isNumberValid) {
             System.out.print("Enter your number: ");
-            String number = s.nextLine();
-            n = Integer.parseInt(number);
-            if (base == 2 && isBinary(n)) {
+            number = s.nextLine();
+            if (base == 2 && isBinary(number)) {
                 isNumberValid = true;
             }
-            if (base == 8 && isValidOctal(Integer.toString(n))) {
+            if (base == 8 && isValidOctal(number)) {
                 isNumberValid = true;
             }
-            if (base == 10 && i)
+            if (base == 10 && isValidDecimal(number)) {
+                isNumberValid = true;
+            }
+            if (base == 16 && isValidHex(number)) {
+                isNumberValid = true;
+            }
         }
         s.close();
 
-        NumberConverter nc = new NumberConverter(n, base);
-        int[] digits = nc.getDigits();
+        NumberConverter nc = new NumberConverter(number, base);
+        String[] digits = nc.getDigits();
         System.out.println("\n\nDigit array: " + Arrays.toString(digits));
-        System.out.println("Number: " + nc.displayOriginalNumber());
+        System.out.println("Original Number: " + nc.displayOriginalNumber());
         System.out.println("As decimal: " + Arrays.toString(nc.convertToDecimal()));
         System.out.println("As binary: " + Arrays.toString(nc.convertToBinary()));
         System.out.println("As octal: " + Arrays.toString(nc.convertToOctal()));

@@ -1,54 +1,104 @@
 public class NumberConverter {
     int[] digits;
+    String[] base16digits;
     int firstBase;
     int base10;
     int binary;
     int octal;
 
-    public NumberConverter(int number, int base) {
-        String numberAsString = Integer.toString(number);
-        digits = new int[numberAsString.length()];
-        for (int i = 0; i < numberAsString.length(); i++) {
-            String single = numberAsString.substring(i,i+1);
-            int d = Integer.parseInt(single);
-            digits[i] = d;
-        }
+    public NumberConverter(String number, int base) {
         this.firstBase = base;
-        if (base == 10) {
-            base10 = number;
+        if (base != 16) {
+            digits = new int[number.length()];
+            for (int i = 0; i < number.length(); i++) {
+                String single = number.substring(i, i + 1);
+                int d = Integer.parseInt(single);
+                digits[i] = d;
+            }
+            if (base == 10) {
+                base10 = Integer.parseInt(number);
+                calculateBinary();
+                calculateOctal();
+            } else if (base == 2) {
+                binary = Integer.parseInt(number);
+                calculateBase10();
+                calculateOctal();
+            } else if (base == 8) {
+                octal = Integer.parseInt(number);
+                calculateBase10();
+                calculateBinary();
+            }
+        } else {
+            base16digits = new String[number.length()];
+            for (int i = 0; i < number.length(); i++) {
+                base16digits[i] = number.charAt(i) + "";
+            }
+            String base10String = "";
+            for (int i = 0; i < number.length(); i++) {
+                String c = number.charAt(i) + "";
+                if (Character.isDigit(c.charAt(0))) {
+                    base10String += c + " ";
+                }
+                if (c.equalsIgnoreCase("a")) {
+                    base10String += 10 + " ";
+                }
+                if (c.equalsIgnoreCase("b")) {
+                    base10String += 11 + " ";
+                }
+                if (c.equalsIgnoreCase("c")) {
+                    base10String += 12 + " ";
+                }
+                if (c.equalsIgnoreCase("d")) {
+                    base10String += 13 + " ";
+                }
+                if (c.equalsIgnoreCase("e")) {
+                    base10String += 14 + " ";
+                }
+                if (c.equalsIgnoreCase("f")) {
+                    base10String += 15 + " ";
+                }
+            }
+            String [] base10StringArray = base10String.split(" ");
+            for (int i = 0; i < base10StringArray.length; i++) {
+                base10 += (int) (Integer.parseInt(base10StringArray[i]) * Math.pow(16, (base10StringArray.length - 1) - i));
+            }
             calculateBinary();
             calculateOctal();
-        } else if (base == 2) {
-            binary = number;
-            calculateBase10();
-            calculateOctal();
-        } else if (base == 8) {
-            octal = number;
-            calculateBase10();
-            calculateBinary();
-        } else if (base == 16) {
-
         }
-
     }
 
     public String displayOriginalNumber() {
         String o = "";
-        for (int i = 0; i < digits.length; i++) {
-            o = o + digits[i];
+        if (firstBase != 16) {
+            for (int digit : digits) {
+                o = o + digit;
+            }
+            o = o + "\n";
+        } else {
+            for (String base16digit : base16digits) {
+                o += base16digit;
+            }
+            o += "\n";
         }
-        o = o + "\n";
         return o;
     }
 
-    public int[] getDigits() {
-        return digits;
+    public String[] getDigits() {
+        if (firstBase != 16) {
+            String [] digitsString = new String[digits.length];
+            for (int i = 0; i < digits.length; i++) {
+                digitsString[i] = Integer.toString(digits[i]);
+            }
+            return digitsString;
+        } else {
+            return base16digits;
+        }
 
     }
 
     private void calculateBase10() {
         for (int i = 0; i < digits.length; i++) {
-            base10 += digits[i] * Math.pow(firstBase, (digits.length - 1) - i);
+            base10 += (int) (digits[i] * Math.pow(firstBase, (digits.length - 1) - i));
         }
     }
 
@@ -67,6 +117,10 @@ public class NumberConverter {
     private void calculateBinary(){
         String binaryString = "";
         int base10ForCalculation = base10;
+        if (base10ForCalculation % 2 == 0) {
+            binaryString += "10";
+            base10ForCalculation /= 2;
+        }
         while (base10ForCalculation != 1) {
             if (base10ForCalculation % 2 != 0) {
                 binaryString += "1";
@@ -97,7 +151,7 @@ public class NumberConverter {
                 octalString += "0";
                 base10ForCalculation /= 8;
             } else {
-                octalString += (base10ForCalculation % 8) + "";
+                octalString = ((base10ForCalculation % 8) + "") + octalString;
                 base10ForCalculation -= (base10ForCalculation % 8);
                 base10ForCalculation /= 8;
             }
@@ -115,4 +169,3 @@ public class NumberConverter {
         return octalArray;
     }
 }
-
