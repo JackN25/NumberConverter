@@ -218,8 +218,19 @@ public class NumberConverter {
 
     public String convertDecimalToBase(int base) {
         int decimalNumber = base10;
+        if (base == 0) {
+            return "0";
+        }
         if (decimalNumber == 0) {
             return "0";
+        }
+        if (base == 1) {
+            StringBuilder result = new StringBuilder();
+            while (decimalNumber != 0) {
+                result.insert(0, "1");
+                decimalNumber -= 1;
+            }
+            return result.toString();
         }
         StringBuilder result = new StringBuilder();
         while (decimalNumber > 0) {
