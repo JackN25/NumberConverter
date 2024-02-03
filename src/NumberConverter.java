@@ -5,6 +5,7 @@ public class NumberConverter {
     int base10;
     int binary;
     int octal;
+    String hex = "";
 
     public NumberConverter(String number, int base) {
         this.firstBase = base;
@@ -19,14 +20,17 @@ public class NumberConverter {
                 base10 = Integer.parseInt(number);
                 calculateBinary();
                 calculateOctal();
+                calculateHex();
             } else if (base == 2) {
                 binary = Integer.parseInt(number);
                 calculateBase10();
                 calculateOctal();
+                calculateHex();
             } else if (base == 8) {
                 octal = Integer.parseInt(number);
                 calculateBase10();
                 calculateBinary();
+                calculateHex();
             }
         } else {
             base16digits = new String[number.length()];
@@ -64,6 +68,7 @@ public class NumberConverter {
             }
             calculateBinary();
             calculateOctal();
+            hex = number;
         }
     }
 
@@ -148,7 +153,7 @@ public class NumberConverter {
         int base10ForCalculation = base10;
         while (base10ForCalculation != 0) {
             if (base10ForCalculation % 8 == 0) {
-                octalString += "0";
+                octalString = "0" + octalString;
                 base10ForCalculation /= 8;
             } else {
                 octalString = ((base10ForCalculation % 8) + "") + octalString;
@@ -167,5 +172,77 @@ public class NumberConverter {
 
         }
         return octalArray;
+    }
+    
+    private void calculateHex() {
+        int base10ForCalculation = base10;
+        while (base10ForCalculation != 0) {
+            if (base10ForCalculation % 16 == 0) {
+                base10ForCalculation /= 16;
+                hex = "0" + hex;
+            } else if (base10ForCalculation % 16 <= 9) {
+                hex = (base10ForCalculation % 16) + hex;
+                base10ForCalculation -= base10ForCalculation % 16;
+                base10ForCalculation /= 16;
+            } else if (base10ForCalculation % 16 == 10) {
+                hex = "a" + hex;
+                base10ForCalculation -= base10ForCalculation % 16;
+                base10ForCalculation /= 16;
+            } else if (base10ForCalculation % 16 == 11) {
+                hex = "b" + hex;
+                base10ForCalculation -= base10ForCalculation % 16;
+                base10ForCalculation /= 16;
+            } else if (base10ForCalculation % 16 == 12) {
+                hex = "c" + hex;
+                base10ForCalculation -= base10ForCalculation % 16;
+                base10ForCalculation /= 16;
+            } else if (base10ForCalculation % 16 == 13) {
+                hex = "d" + hex;
+                base10ForCalculation -= base10ForCalculation % 16;
+                base10ForCalculation /= 16;
+            } else if (base10ForCalculation % 16 == 14) {
+                hex = "e" + hex;
+                base10ForCalculation -= base10ForCalculation % 16;
+                base10ForCalculation /= 16;
+            } else {
+                hex = "f" + hex;
+                base10ForCalculation -= base10ForCalculation % 16;
+                base10ForCalculation /= 16;
+            }
+        }
+    }
+
+    public String convertToHex() {
+        return hex;
+    }
+
+    public String convertDecimalToBase(int base) {
+        int decimalNumber = base10;
+        if (decimalNumber == 0) {
+            return "0";
+        }
+        StringBuilder result = new StringBuilder();
+        while (decimalNumber > 0) {
+            int remainder = decimalNumber % base;
+            result.insert(0, getBaseCharacter(remainder));
+            decimalNumber /= base;
+        }
+        return result.toString();
+    }
+
+    private static char getBaseCharacter(int value) {
+        if (value >= 0 && value <= 9) {
+            return (char) ('0' + value);
+        } else if (value >= 10 && value <= 35) {
+            return (char) ('A' + (value - 10));
+        } else if (value >= 36 && value <= 61) {
+            return (char) ('a' + (value - 36));
+        } else if (value == 62) {
+            return '+';
+        } else if (value == 63) {
+            return '/';
+        } else {
+            throw new IllegalArgumentException("Invalid base character for value: " + value);
+        }
     }
 }

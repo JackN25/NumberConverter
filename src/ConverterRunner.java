@@ -26,6 +26,8 @@ class ConverterRunner {
     public static void main(String[] args) {
         boolean isBaseValid = false;
         boolean isNumberValid = false;
+        boolean isCustomBaseValid = false;
+        int customBase = 0;
         int base = 0;
         int n = 0;
         Scanner s = new Scanner(System.in);
@@ -34,7 +36,7 @@ class ConverterRunner {
         System.out.println("--------------------------------");
 
         while (!isBaseValid) {
-            System.out.print("Enter the base of your number (2, 8 or 10): ");
+            System.out.print("Enter the base of your number (2, 8, 10 or 16): ");
             String choice = s.nextLine();
             base = Integer.parseInt(choice);
             if (base == 2 || base == 8 || base == 10 || base == 16) {
@@ -61,7 +63,6 @@ class ConverterRunner {
                 isNumberValid = true;
             }
         }
-        s.close();
 
         NumberConverter nc = new NumberConverter(number, base);
         String[] digits = nc.getDigits();
@@ -70,8 +71,21 @@ class ConverterRunner {
         System.out.println("As decimal: " + Arrays.toString(nc.convertToDecimal()));
         System.out.println("As binary: " + Arrays.toString(nc.convertToBinary()));
         System.out.println("As octal: " + Arrays.toString(nc.convertToOctal()));
+        System.out.println("As hex: " + nc.convertToHex());
 
-
+        if (base == 10) {
+            while (!isCustomBaseValid) {
+                System.out.print("\nWhat base do you want to convert to (0-64): ");
+                String currentInput = s.nextLine();
+                if (!currentInput.matches(".*[a-zA-Z].*")) {
+                    if (Integer.parseInt(currentInput) <= 64) {
+                        isCustomBaseValid = true;
+                        customBase = Integer.parseInt(currentInput);
+                    }
+                }
+            }
+            System.out.println("Custom base number: " + nc.convertDecimalToBase(customBase));
+        }
     }
 }
 
